@@ -7,19 +7,16 @@ def check_availability(article):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Vérification pour Cultura
     if "cultura.com" in url:
         status = soup.find("p", class_="stock color-red")
-        return False if status and "INDISPONIBLE" in status.get_text(strip=True) else True
+        return status is None or "INDISPONIBLE" not in status.get_text(strip=True)
 
-    # Vérification pour Fnac
     if "fnac.com" in url:
         status = soup.find("div", class_="f-buyBox-availabilityStatus")
-        return False if status and "indisponible" in status.get_text(strip=True) else True
+        return status is not None and "disponible" in status.get_text(strip=True).lower()
 
-    # Vérification pour Le Repaire du Dragon
     if "lerepairedudragon.fr" in url:
         status = soup.find("span", class_="label label-danger")
-        return False if status and "n'est pas en stock" in status.get_text(strip=True) else True
+        return status is None or "n'est pas en stock" not in status.get_text(strip=True)
 
     return False
