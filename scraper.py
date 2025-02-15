@@ -12,8 +12,8 @@ def check_availability(article):
         return status is not None and "INDISPONIBLE" in status.get_text(strip=True)
 
     if "fnac.com" in url:
-        status = soup.find("div", class_="f-buyBox-availabilityStatus")
-        return status is None or "indisponible" not in status.get_text(strip=True).lower()
+        status = soup.find("p", {"data-automation-id": "product-availability"})
+        return status is not None and "Stock en ligne épuisé" not in status.get_text(strip=True).lower()
 
     if "lerepairedudragon.fr" in url:
         status = soup.find("span", class_="label label-danger")
