@@ -1,13 +1,22 @@
-from config import ARTICLE_URL
+from config import ARTICLES
 import requests
 from bs4 import BeautifulSoup
 
-def check_availability():
-    response = requests.get(ARTICLE_URL)
+def check_availability(article):
+    url = article["url"]
+    response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    status = soup.find("p", class_="stock color-red")
 
-    if status and "INDISPONIBLE EN LIGNE" in status.get_text(strip=True):
-        return False
-    else:
-        return True if status else False
+    if "cultura.com" in url:
+        status = soup.find("p", class_="stock color-red")
+        return not (status and "INDISPONIBLE" in status.get_text(strip=True))
+
+    if "fnac.com" in url:
+        status = soup.find("div", class_="f-buyBox-availabilityStatus")
+        return not (status and "indisponible" in status.get_text(strip=True))
+
+    if "lerepairedudragon.fr" in url:
+        status = soup.find("span", class_="label label-danger")
+        return not (status and "n'est pas en stock" in status.get_text(strip=True))
+
+    return False
