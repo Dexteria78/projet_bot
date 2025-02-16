@@ -10,23 +10,23 @@ def check_availability(article):
     if "cultura.com" in url:
         status = soup.find("p", class_="stock color-red")
         if status is None:
-            return True  # Disparu
+            return True  # Message disparu
         text = status.get_text(strip=True).lower()
-        return text != "indisponible en ligne"  # Changé
+        return "indisponible en ligne" not in text  # Envoie si le message change
 
     if "fnac.com" in url:
         status = soup.find("p", {"data-automation-id": "product-availability"})
         if status is None:
             return True
         text = status.get_text(strip=True).lower()
-        return text != "stock en ligne épuisé"
+        return "stock en ligne épuisé" not in text
 
     if "lerepairedudragon.fr" in url:
         status = soup.find("span", class_="label label-danger")
         if status is None:
             return True
         text = status.get_text(strip=True).lower()
-        return text != "n'est pas en stock"
+        return "n'est pas en stock" not in text
 
     return False
 
@@ -38,6 +38,6 @@ def has_changed(article):
     if url not in previous_status:
         previous_status[url] = current
         return False
-    changed = (previous_status[url] == False and current == True)  # Passe de indisponible à dispo
+    changed = current != previous_status[url] and current is True  # Envoie seulement si l'état passe à disponible
     previous_status[url] = current
     return changed
