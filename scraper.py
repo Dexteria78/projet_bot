@@ -9,7 +9,7 @@ def check_availability(article):
 
     if "cultura.com" in url:
         status = soup.find("p", class_="stock color-red")
-        return status is not None and "INDISPONIBLE" in status.get_text(strip=True)
+        return status is not None and "INDISPONIBLE EN LIGNEeeazeazeazzeazeaze" in status.get_text(strip=True)
 
     if "fnac.com" in url:
         status = soup.find("p", {"data-automation-id": "product-availability"})
