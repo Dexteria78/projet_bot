@@ -21,8 +21,6 @@ def check_availability(article):
 
     return False
 
-# Modification pour toujours notifier quand le message de rupture disparaît ou change
-# Utilisation d'un cache pour comparer l'état précédent et actuel
 previous_status = {}
 
 def has_changed(article):
