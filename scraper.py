@@ -9,14 +9,28 @@ def check_availability(article):
 
     if "cultura.com" in url:
         status = soup.find("p", class_="stock color-red")
-        return status is not None and "indisponible en ligne" not in status.get_text(strip=True).lower()
+        return status is None or "indisponible en ligne" not in status.get_text(strip=True).lower()
 
     if "fnac.com" in url:
         status = soup.find("p", {"data-automation-id": "product-availability"})
-        return status is not None and "stoc ligne épuisé" not in status.get_text(strip=True).lower()
+        return status is None or "stock en ligne épuisé" not in status.get_text(strip=True).lower()
 
     if "lerepairedudragon.fr" in url:
         status = soup.find("span", class_="label label-danger")
-        return status is not None and "n'est pas en stock" not in status.get_text(strip=True).lower()
+        return status is None or "n'est pas en stock" not in status.get_text(strip=True).lower()
 
     return False
+
+# Modification pour toujours notifier quand le message de rupture disparaît ou change
+# Utilisation d'un cache pour comparer l'état précédent et actuel
+previous_status = {}
+
+def has_changed(article):
+    current = check_availability(article)
+    url = article["url"]
+    if url not in previous_status:
+        previous_status[url] = current
+        return False
+    changed = previous_status[url] != current
+    previous_status[url] = current
+    return changed
