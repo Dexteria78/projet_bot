@@ -1,6 +1,18 @@
 from config import ARTICLES
 import requests
 from bs4 import BeautifulSoup
+import pickle
+import os
+
+def load_status():
+    if os.path.exists("status.pkl"):
+        with open("status.pkl", "rb") as f:
+            return pickle.load(f)
+    return {}
+
+def save_status(status):
+    with open("status.pkl", "wb") as f:
+        pickle.dump(status, f)
 
 def check_availability(article):
     url = article["url"]
@@ -9,35 +21,27 @@ def check_availability(article):
 
     if "cultura.com" in url:
         status = soup.find("p", class_="stock color-red")
-        if status is None:
-            return True  # Message disparu
-        text = status.get_text(strip=True).lower()
-        return "indisponible en ligne" not in text  # Envoie si le message change
+        text = status.get_text(strip=True).lower() if status else ""
+        return text != "indisponible en ligne"
 
     if "fnac.com" in url:
         status = soup.find("p", {"data-automation-id": "product-availability"})
-        if status is None:
-            return True
-        text = status.get_text(strip=True).lower()
-        return "stock en ligne épuisé" not in text
+        text = status.get_text(strip=True).lower() if status else ""
+        return text != "stock en ligne épuisé"
 
     if "lerepairedudragon.fr" in url:
         status = soup.find("span", class_="label label-danger")
-        if status is None:
-            return True
-        text = status.get_text(strip=True).lower()
-        return "n'est pas en stock" not in text
+        text = status.get_text(strip=True).lower() if status else ""
+        return text != "n'est pas en stock"
 
     return False
 
-previous_status = {}
+previous_status = load_status()
 
 def has_changed(article):
     current = check_availability(article)
     url = article["url"]
-    if url not in previous_status:
-        previous_status[url] = current
-        return False
-    changed = current != previous_status[url] and current is True  # Envoie seulement si l'état passe à disponible
+    changed = url not in previous_status or previous_status[url] != current
     previous_status[url] = current
-    return changed
+    save_status(previous_status)
+    return changed and current
