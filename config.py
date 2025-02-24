@@ -13,4 +13,4 @@ ARTICLES = [
     }
 ]
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1340399446181281812/4g91m7aRydVyDI9JXLw4od4DWR_fSQV09-FDsfnViyq1jp_yhGpUptctRx-_MBM8BiKy"
-CHECK_INTERVAL = 62
+CHECK_INTERVAL = 31
