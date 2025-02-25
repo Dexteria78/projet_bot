@@ -13,8 +13,4 @@ ARTICLES = [
     }
 ]
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1340399446181281812/4g91m7aRydVyDI9JXLw4od4DWR_fSQV09-FDsfnViyq1jp_yhGpUptctRx-_MBM8BiKy"
-<<<<<<< HEAD
 CHECK_INTERVAL = 31
-=======
-CHECK_INTERVAL = 32
->>>>>>> 4743b59 (test)
