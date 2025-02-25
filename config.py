@@ -4,7 +4,7 @@ ARTICLES = [
         "message": "🛒 Booster One Piece OP01 disponible chez Cultura !"
     },
     {
-        "url": "https://www.fnac.com/mon-autre-article",
+        "url": "https://www.fnac.com/Cartes-a-collectionner-One-Piece-Booster-Premium-Blister/a21244435/w-4",
         "message": "🛒 Un article est disponible sur la Fnac !"
     },
     {
@@ -13,4 +13,8 @@ ARTICLES = [
     }
 ]
 DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1340399446181281812/4g91m7aRydVyDI9JXLw4od4DWR_fSQV09-FDsfnViyq1jp_yhGpUptctRx-_MBM8BiKy"
+<<<<<<< HEAD
 CHECK_INTERVAL = 31
+=======
+CHECK_INTERVAL = 32
+>>>>>>> 4743b59 (test)
