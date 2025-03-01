@@ -9,10 +9,22 @@ def send_discord_message(message):
 
 def check_availability(article):
     url = article["url"]
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36"}
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36",
+        "Accept-Language": "fr-FR,fr;q=0.9",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Connection": "keep-alive",
+        "Referer": "https://www.google.com/",
+        "DNT": "1"
+    }
+    session = requests.Session()
+    session.headers.update(headers)
     
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = session.get(url, timeout=10)
+        if response.status_code == 403:
+            print(f"[ERROR] Accès interdit (403) sur {url}, le site bloque les requêtes.")
+            return False
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         
