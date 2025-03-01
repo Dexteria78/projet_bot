@@ -20,25 +20,33 @@ def check_availability(article):
             status = soup.select_one("div#pdp-availability .stock")
             text = status.get_text(strip=True).lower() if status else "indisponible"
         elif "fnac.com" in url:
-            price_element = soup.select_one("span.f-priceBox_price.userPrice.checked")
+            price_element = soup.select_one("div.f-priceBox__priceLine span.f-priceBox_price")
             if price_element:
-                price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".")
+                price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".").replace("\xa0", "")
+                print(f"[DEBUG] Prix détecté sur Fnac: {price_text}")
                 try:
                     price = float(price_text)
                     if price == 6.99:
+                        send_discord_message(f"🔔 L'article est disponible à {price}€ sur Fnac ! ({url})")
                         return True
                 except ValueError:
+                    print("[ERROR] Impossible de convertir le prix en float")
                     return False
+            else:
+                print("[DEBUG] Aucune balise de prix trouvée sur Fnac")
             return False
         elif "lerepairedudragon.fr" in url:
             price_element = soup.select_one("span.f-priceBox_price.userPrice.checked")
             if price_element:
-                price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".")
+                price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".").replace("\xa0", "")
+                print(f"[DEBUG] Prix détecté sur Le Repaire du Dragon: {price_text}")
                 try:
                     price = float(price_text)
                     if price == 140.00:
+                        send_discord_message(f"🔔 L'article est disponible à {price}€ sur Le Repaire du Dragon ! ({url})")
                         return True
                 except ValueError:
+                    print("[ERROR] Impossible de convertir le prix en float")
                     return False
             return False
         else:
@@ -53,7 +61,6 @@ def main():
         stock_detected = False
         for article in ARTICLES:
             if check_availability(article):
-                send_discord_message(f"{article['message']} ({article['url']})")
                 stock_detected = True
         if not stock_detected:
             time.sleep(CHECK_INTERVAL)
