@@ -35,6 +35,11 @@ def check_availability(article):
         
         if "fnac.com" in url:
             print("[DEBUG] Scrapping page Fnac avec Selenium...")
+            
+            # Afficher un extrait du HTML récupéré
+            print("[DEBUG] HTML extrait :")
+            print(html[:1000])  # Afficher les 1000 premiers caractères
+            
             price_element = soup.select_one("div.f-priceBox__priceLine span.f-priceBox_price")
             if not price_element:
                 price_element = soup.select_one("span.f-priceBox_price")
@@ -51,7 +56,7 @@ def check_availability(article):
                     print("[ERROR] Impossible de convertir le prix en float")
                     return False
             else:
-                print("[DEBUG] Aucun prix détecté sur Fnac")
+                print("[DEBUG] Aucun prix détecté sur Fnac, vérifier le sélecteur CSS")
             return False
         return False
     except Exception as e:
