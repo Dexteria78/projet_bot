@@ -14,7 +14,7 @@ def get_page_source(url):
     chromedriver_autoinstaller.install()
 
     options = webdriver.ChromeOptions()
-    options.binary_location = "/usr/bin/chromium-browser"  # Chemin de Chrome sur Railway
+    options.binary_location = "/usr/bin/google-chrome"
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
