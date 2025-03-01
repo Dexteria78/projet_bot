@@ -16,11 +16,15 @@ def check_availability(article):
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         
-        if "cultura.com" in url:
-            status = soup.select_one("div#pdp-availability .stock")
-            text = status.get_text(strip=True).lower() if status else "indisponible"
-        elif "fnac.com" in url:
+        if "fnac.com" in url:
+            print("[DEBUG] Scrapping page Fnac...")
+            print(soup.prettify()[:1000])  # Afficher un extrait du HTML pour debug
+            
             price_element = soup.select_one("div.f-priceBox__priceLine span.f-priceBox_price")
+            if not price_element:
+                print("[DEBUG] Premier sélecteur de prix échoué, test d'autres sélecteurs...")
+                price_element = soup.select_one("span.f-priceBox_price")
+            
             if price_element:
                 price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".").replace("\xa0", "")
                 print(f"[DEBUG] Prix détecté sur Fnac: {price_text}")
@@ -33,24 +37,9 @@ def check_availability(article):
                     print("[ERROR] Impossible de convertir le prix en float")
                     return False
             else:
-                print("[DEBUG] Aucune balise de prix trouvée sur Fnac")
+                print("[DEBUG] Aucun prix détecté sur Fnac")
             return False
-        elif "lerepairedudragon.fr" in url:
-            price_element = soup.select_one("span.f-priceBox_price.userPrice.checked")
-            if price_element:
-                price_text = price_element.get_text(strip=True).replace("€", "").replace(",", ".").replace("\xa0", "")
-                print(f"[DEBUG] Prix détecté sur Le Repaire du Dragon: {price_text}")
-                try:
-                    price = float(price_text)
-                    if price == 140.00:
-                        send_discord_message(f"🔔 L'article est disponible à {price}€ sur Le Repaire du Dragon ! ({url})")
-                        return True
-                except ValueError:
-                    print("[ERROR] Impossible de convertir le prix en float")
-                    return False
-            return False
-        else:
-            return False
+        return False
     except requests.RequestException as e:
         print(f"Erreur sur {url}: {e}")
         return False
