@@ -1,6 +1,7 @@
 import time
 import requests
-import undetected_chromedriver as uc
+import chromedriver_autoinstaller
+from selenium import webdriver
 from bs4 import BeautifulSoup
 from config import DISCORD_WEBHOOK_URL, CHECK_INTERVAL, ARTICLES
 
@@ -9,15 +10,17 @@ def send_discord_message(message):
     requests.post(DISCORD_WEBHOOK_URL, json=payload)
 
 def get_page_source(url):
-    options = uc.ChromeOptions()
+    # Installer automatiquement la bonne version de ChromeDriver
+    chromedriver_autoinstaller.install()
+
+    options = webdriver.ChromeOptions()
     options.binary_location = "/usr/bin/chromium-browser"  # Chemin de Chromium sur Railway
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-blink-features=AutomationControlled")
 
-    driver = uc.Chrome(options=options)
+    driver = webdriver.Chrome(options=options)
     driver.get(url)
     time.sleep(3)  # Attendre le chargement de la page
     html = driver.page_source
